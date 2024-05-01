@@ -1,4 +1,4 @@
-function dydt = core_base(t,y,params)
+function dydt = core_CD8supp(t,y,params)
 
 % Specify state variables
 T           = y(1);
@@ -6,7 +6,7 @@ T_dead      = y(2);
 Treg        = y(3);
 Treg_dead   = y(4);
 CD8         = y(5);
-CD8_sup     = y(6);
+CD8_ex      = y(6);
 
 
 % Specify parameters
@@ -27,8 +27,8 @@ dydt(1,1) = kpT*T - kdT*T*CD8;
 dydt(2,1) = kdT*T*CD8;
 dydt(3,1) = kpTr*Treg - kdTr*Treg;
 dydt(4,1) = kdTr*Treg;
-dydt(5,1) = kpCD8*CD8 - ksupCD8*CD8*(Treg) - kdCD8*CD8;
-dydt(6,1) = ksupCD8*CD8*(Treg);
+dydt(5,1) = kpCD8*CD8 - ksupCD8*CD8*(Treg/(Baso*str_CD8supp)) - kdCD8*CD8;
+dydt(6,1) = ksupCD8*CD8*(Treg/(Baso*str_CD8supp));
 
 
 return

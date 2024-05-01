@@ -17,7 +17,7 @@ kdTr            = params(4,1); % kdTr
 str_TregDeath   = params(5,1); % str_TregDeath
 kpCD8           = params(6,1); % kpCD8
 ksupCD8         = params(7,1); % ksupCD8
-str_CD8prolif   = params(8,1); % str_CD8prolif
+str_CD8supp     = params(8,1); % str_CD8supp
 kdCD8           = params(9,1); % kdCD8
 Baso            = params(10,1); % number of basophils
 
