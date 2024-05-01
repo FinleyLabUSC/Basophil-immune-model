@@ -7,9 +7,9 @@ core_base.m - contains ODEs for base model of cancer cells, Tregs, and CD8 T cel
 
 core_TregDeath.m - contains ODEs for model where basophils promote Treg death
 
-core_CD8prolif.m - contains ODEs for model where basophils promote CD8 T cell proliferation
+core_CD8supp.m - contains ODEs for model where basophils promote Treg-mediated suppression of CD8 T cells
 
-core_TregDeath_CD8prolif.m - contains ODEs for model where basophils promote death of Tregs and CD8 T cell proliferation
+core_TregDeath_CD8supp.m - contains ODEs for model where basophils promote death of Tregs and Treg-mediated suppression of CD8 T cells
 
 
 Will update upon revision and publication.
