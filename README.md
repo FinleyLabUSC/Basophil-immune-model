@@ -1,5 +1,5 @@
 # Basophil-immune-model
-Code repository for immune models to study the effect of basophils on enhancing cancer cell killing by CD8 T cells.
+Code repository for computational models to study the effect of basophils on enhancing cancer cell killing by CD8 T cells.
 
 run the "driver.m" file, which calls individual model files "core_FILENAME.m", calculates percent cancer cell death, and plots the simulated species' dynamics.
 
