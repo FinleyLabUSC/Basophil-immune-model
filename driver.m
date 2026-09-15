@@ -16,7 +16,7 @@ clear all;
 % CD8 cells
     params(6,1) = 1e-9;             % kpCD8 -- fixed to balance death 
     params(7,1) = 3.71e-10;         % ksupCD8 -- fixed; +Treg: 0.21% cancer cell death in 72h (achieves 0.23%)
-    params(8,1) = 5.24e-2;          % str_CD8prolif strength of basophil effect on promoting CD8 proliferation 
+    params(8,1) = 2.8e-4;           % str_CD8supp strength of basophil effect on inhibiting Treg-mediated CD8 suppression
                                     %           -- tuned to achieve 19.2% cancer cell death when considering both basophil-mediated mechanisms
     params(9,1) = 1e-9;             % kdCD8 -- fixed to exactly balance production
 
@@ -57,21 +57,21 @@ initvalue(3,1) = init_Treg;  %Treg
 initvalue(5,1) = init_CD8;  %CD8
 [tsim, results_noB] = ode15s(@core_base,tspan,initvalue,options,params);
 [tsim, results_TregDeath] = ode15s(@core_TregDeath,tspan,initvalue,options,params);
-[tsim, results_CD8prolif] = ode15s(@core_CD8prolif,tspan,initvalue,options,params);
-[tsim, results_TregDeath_CD8prolif] = ode15s(@core_TregDeath_CD8prolif,tspan,initvalue,options,params);
+[tsim, results_CD8supp] = ode15s(@core_CD8supp,tspan,initvalue,options,params);
+[tsim, results_TregDeath_CD8supp] = ode15s(@core_TregDeath_CD8supp,tspan,initvalue,options,params);
 
 
 %-- calculate percent cancer cell death
 labels = {'Cancer cell+CD8','Cancer cell+CD8+Treg',...
-    'Basophils promote Treg death','Basophils promote CD8 proliferation',...
-    'Basophils inhibit Treg function + promote CD8 prolif'};
+    'Basophils promote Treg death','Basophils inhibit Treg-mediated CD8 suppression',...
+    'Basophils promote Treg death + inhibit Cd8 supp'};
 
 percentages = (1-([results_cancerCD8(end,1);results_noB(end,1);...
-        results_TregDeath(end,1);results_CD8prolif(end,1);...
-        results_TregDeath_CD8prolif(end,1)]/init_cancer))*100;
+        results_TregDeath(end,1);results_CD8supp(end,1);...
+        results_TregDeath_CD8supp(end,1)]/init_cancer))*100;
 cancerCellCount = [results_cancerCD8(:,1); results_noB(:,1);...
-        results_TregDeath(:,1); results_CD8prolif(:,1); ...
-        results_TregDeath_CD8prolif(:,1)];
+        results_TregDeath(:,1); results_CD8supp(:,1); ...
+        results_TregDeath_CD8supp(:,1)];
 
 %-- bar graph
 figure(1);
@@ -105,8 +105,8 @@ hold on; plot(tsim,results_cancerCD8(:,whichSpecies),'LineWidth',w,'Color',[0.64
 hold on; plot(tsim,results_cancerCD8Baso(:,whichSpecies),'LineWidth',w,'Color',[0 0.8 0.8]);
 hold on; plot(tsim,results_noB(:,whichSpecies),'LineWidth',w,'Color',[0.5,0.5,0.5]);
 hold on; plot(tsim,results_TregDeath(:,whichSpecies),'LineWidth',w,'Color',[0.49,0.18,0.56]);
-hold on; plot(tsim,results_CD8prolif(:,whichSpecies),'LineWidth',w,'Color',[0.07,0.62,1.00]);
-hold on; plot(tsim,results_TregDeath_CD8prolif(:,whichSpecies),'LineWidth',w,'Color',[0.47,0.67,0.19]);
+hold on; plot(tsim,results_CD8supp(:,whichSpecies),'LineWidth',w,'Color',[0.07,0.62,1.00]);
+hold on; plot(tsim,results_TregDeath_CD8supp(:,whichSpecies),'LineWidth',w,'Color',[0.47,0.67,0.19]);
 hold off;
 xlim([0 numDays*24])
 xlabel('time (hrs)')
@@ -126,8 +126,8 @@ hold on; plot(tsim,results_cancerCD8(:,whichSpecies),'LineWidth',w,'Color',[0.64
 hold on; plot(tsim,results_cancerCD8Baso(:,whichSpecies),'LineWidth',w,'Color',[0 0.8 0.8]);
 hold on; plot(tsim,results_noB(:,whichSpecies),'LineWidth',w,'Color',[0.5,0.5,0.5]);
 hold on; plot(tsim,results_TregDeath(:,whichSpecies),'LineWidth',w,'Color',[0.49,0.18,0.56]);
-hold on; plot(tsim,results_CD8prolif(:,whichSpecies),'LineWidth',w,'Color',[0.07,0.62,1.00]);
-hold on; plot(tsim,results_TregDeath_CD8prolif(:,whichSpecies),'LineWidth',w,'Color',[0.47,0.67,0.19]);
+hold on; plot(tsim,results_CD8supp(:,whichSpecies),'LineWidth',w,'Color',[0.07,0.62,1.00]);
+hold on; plot(tsim,results_TregDeath_CD8supp(:,whichSpecies),'LineWidth',w,'Color',[0.47,0.67,0.19]);
 hold off;
 xlim([0 numDays*24])
 xlabel('time (hrs)')
@@ -144,8 +144,8 @@ hold on; plot(tsim,results_cancerCD8(:,whichSpecies),'LineWidth',w,'Color',[0.64
 hold on; plot(tsim,results_cancerCD8Baso(:,whichSpecies),'LineWidth',w,'Color',[0 0.8 0.8]);
 hold on; plot(tsim,results_noB(:,whichSpecies),'LineWidth',w,'Color',[0.5,0.5,0.5]);
 hold on; plot(tsim,results_TregDeath(:,whichSpecies),'LineWidth',w,'Color',[0.49,0.18,0.56]);
-hold on; plot(tsim,results_CD8prolif(:,whichSpecies),'LineWidth',w,'Color',[0.07,0.62,1.00]);
-hold on; plot(tsim,results_TregDeath_CD8prolif(:,whichSpecies),'LineWidth',w,'Color',[0.47,0.67,0.19]);
+hold on; plot(tsim,results_CD8supp(:,whichSpecies),'LineWidth',w,'Color',[0.07,0.62,1.00]);
+hold on; plot(tsim,results_TregDeath_CD8supp(:,whichSpecies),'LineWidth',w,'Color',[0.47,0.67,0.19]);
 hold off;
 xlim([0 numDays*24])
 xlabel('time (hrs)')
@@ -162,7 +162,7 @@ hold on; plot(tsim,results_cancerCD8(:,whichSpecies),'LineWidth',w,'Color',[0.64
 hold on; plot(tsim,results_cancerCD8Baso(:,whichSpecies),'LineWidth',w,'Color',[0 0.8 0.8]);
 hold on; plot(tsim,results_noB(:,whichSpecies),'LineWidth',w,'Color',[0.5,0.5,0.5]);
 hold on; plot(tsim,results_TregDeath(:,whichSpecies),'LineWidth',w,'Color',[0.49,0.18,0.56]);
-hold on; plot(tsim,results_TregDeath_CD8prolif(:,whichSpecies),'LineWidth',w,'Color',[0.47,0.67,0.19]);
+hold on; plot(tsim,results_TregDeath_CD8supp(:,whichSpecies),'LineWidth',w,'Color',[0.47,0.67,0.19]);
 hold off;
 xlim([0 numDays*24])
 xlabel('time (hrs)')
@@ -179,8 +179,8 @@ hold on; plot(tsim,results_cancerCD8(:,whichSpecies),'LineWidth',w,'Color',[0.64
 hold on; plot(tsim,results_cancerCD8Baso(:,whichSpecies),'LineWidth',w,'Color',[0 0.8 0.8]);
 hold on; plot(tsim,results_noB(:,whichSpecies),'LineWidth',w,'Color',[0.5,0.5,0.5]);
 hold on; plot(tsim,results_TregDeath(:,whichSpecies),'LineWidth',w,'Color',[0.49,0.18,0.56]);
-hold on; plot(tsim,results_CD8prolif(:,whichSpecies),'LineWidth',w,'Color',[0.07,0.62,1.00]);
-hold on; plot(tsim,results_TregDeath_CD8prolif(:,whichSpecies),'LineWidth',w,'Color',[0.47,0.67,0.19]);
+hold on; plot(tsim,results_CD8supp(:,whichSpecies),'LineWidth',w,'Color',[0.07,0.62,1.00]);
+hold on; plot(tsim,results_TregDeath_CD8supp(:,whichSpecies),'LineWidth',w,'Color',[0.47,0.67,0.19]);
 hold off;
 xlim([0 numDays*24])
 xlabel('time (hrs)')
@@ -196,8 +196,8 @@ hold on; plot(tsim,results_cancerCD8(:,whichSpecies),'LineWidth',w,'Color',[0.64
 hold on; plot(tsim,results_cancerCD8Baso(:,whichSpecies),'LineWidth',w,'Color',[0 0.8 0.8]);
 hold on; plot(tsim,results_noB(:,whichSpecies),'LineWidth',w,'Color',[0.5,0.5,0.5]);
 hold on; plot(tsim,results_TregDeath(:,whichSpecies),'LineWidth',w,'Color',[0.49,0.18,0.56]);
-hold on; plot(tsim,results_CD8prolif(:,whichSpecies),'LineWidth',w,'Color',[0.07,0.62,1.00]);
-hold on; plot(tsim,results_TregDeath_CD8prolif(:,whichSpecies),'LineWidth',w,'Color',[0.47,0.67,0.19]);
+hold on; plot(tsim,results_CD8supp(:,whichSpecies),'LineWidth',w,'Color',[0.07,0.62,1.00]);
+hold on; plot(tsim,results_TregDeath_CD8supp(:,whichSpecies),'LineWidth',w,'Color',[0.47,0.67,0.19]);
 hold off;
 xlim([0 numDays*24])
 xlabel('time (hrs)')
